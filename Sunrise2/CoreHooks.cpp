@@ -124,15 +124,20 @@ int XamEnumerateHook(
 		hEnum == lsp_enum_handle
 	) {
 		write_to_halo_logs("networking:sunrise: XamEnumerateHook(%d, %d, %d, %d, %d, %d)", hEnum, dwFlags, pvBuffer, cbBuffer, pcItemsReturned, pOverlapped);
+		XNotify(L"networking:sunrise: XamEnumerateHook(idfk)");
 		write_to_halo_logs("networking:sunrise: XamEnumerateHook with handle %d", hEnum);
+		XNotify(L"networking:sunrise: XamEnumerateHook with handle IDFK");
 		write_to_halo_logs("networking:sunrise: This is enumeration %d", enumeration_index);
+		XNotify(L"networking:sunrise: This is enumeration IDFK");
 
 		if (cbBuffer < sizeof(XTITLE_SERVER_INFO)) {
 			write_to_halo_logs("networking:sunrise: XamEnumerateHook The buffer is too small! %d < %d", cbBuffer, sizeof(XTITLE_SERVER_INFO));
+			XNotify(L"networking:sunrise: XamEnumerateHook The buffer is too DAMN small!!!");
 			return ERROR_INSUFFICIENT_BUFFER;
 		}
-
+		XNotify(L"networking:sunrise: Copying LSP info from %d to buffer %d");
 		write_to_halo_logs("networking:sunrise: Copying LSP info from %d to buffer %d", &activeServer, pvBuffer);
+		XNotify(L"networking:sunrise: Our server info has IP %d description %s");
 		write_to_halo_logs("networking:sunrise: Our server info has IP %d description %s", activeServer.inaServer.S_un.S_addr, activeServer.szServerInfo);
 		memcpy(pvBuffer, &activeServer, sizeof(XTITLE_SERVER_INFO));
 
@@ -141,6 +146,7 @@ int XamEnumerateHook(
 		enumeration_index = 1;
 
 		if (pOverlapped) {
+			XNotify(L"networking:sunrise: overlapped with low = %d, high = %d, context = %d, error = %d, event = %d");
 			write_to_halo_logs("networking:sunrise: overlapped with low = %d, high = %d, context = %d, error = %d, event = %d",
 				pOverlapped->InternalLow,
 				pOverlapped->InternalHigh,
@@ -161,9 +167,10 @@ int XamEnumerateHook(
 				pOverlapped->dwExtendedError,
 				pOverlapped->hEvent
 			);
-
+			XNotify(L"networking:sunrise: Set overlapped to low = %d, high = %d, context = %d, error = %d, event = %d");
 
 			if (pOverlapped->hEvent) {
+				XNotify(L"networking:sunrise Resetting event...");
 				write_to_halo_logs("networking:sunrise Resetting event...");
 
 				ResetEvent(pOverlapped->hEvent);
@@ -171,11 +178,12 @@ int XamEnumerateHook(
 
 
 			if (pOverlapped->hEvent) {
+				XNotify(L"networking:sunrise Setting event...");
 				write_to_halo_logs("networking:sunrise Setting event...");
 
 				SetEvent(pOverlapped->hEvent);
 			}
-
+			XNotify(L"networking:sunrise XamEnumerateHook finished. Hold onto your helmets.");
 			write_to_halo_logs("networking:sunrise XamEnumerateHook finished. Hold onto your helmets.");
 
 			return ERROR_IO_PENDING;
