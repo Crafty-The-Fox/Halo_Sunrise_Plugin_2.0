@@ -6,9 +6,6 @@
 // 
 //  Credits:
 //			craftycodie - Halo hooks and address
-//          craftyfoxx  - dj hero 2 edits
-//
-// 
 //-----------------------------------------------------------------------------
 
 #include "stdafx.h"
@@ -17,9 +14,9 @@
 
 const char* SunriseVers = "2.1.0";
 
-in_addr sunrise_ip = {0,0,0,0} //not public
-INT sunrise_port = 3075; //change to warehouse, multiple ports?? (1000 or 1234 or 1100)
-const char sunrise_description[XTITLE_SERVER_MAX_SERVER_INFO_LEN] = "required,mass_storage,other,ttl,usr,shr,web,dbg,upl,prs,std"; //may require changes?
+in_addr sunrise_ip = { 174, 136, 231, 17 };
+INT sunrise_port = 8000;
+const char sunrise_description[XTITLE_SERVER_MAX_SERVER_INFO_LEN] = "required,mass_storage,other,ttl,usr,shr,web,dbg,upl,prs,std";
 
 
 HANDLE hXam;
@@ -28,7 +25,6 @@ BOOL bLoopHasComplete = FALSE;
 BOOL bIsDevkit; // Set on plugin load. Skips doing xnotify on devkits
 DWORD LastTitleId;
 
-DWORD DJHero2 = 0x4156087F; //djh2 retail title id
 DWORD Halo3InternalBeta = 0x4D53883A;
 DWORD Halo3ExternalBeta = 0x4D53880C;
 DWORD Halo3 = 0x4D5307E6;
@@ -41,7 +37,7 @@ BOOL bIgnoreTrueskill = FALSE;
 DWORD Halo3_Retail_XUserReadStats_Addr = 0x825B6358;
 DWORD Halo3_Epsilon_XUserReadStats_Addr = 0x826E77E8;
 
-/* not needed
+
 VOID AllowRetailPlayers_HALO3_RETAIL()
 {
 	Sunrise_Dbg("Allowing Retail players");
@@ -82,8 +78,6 @@ VOID AllowRetailPlayers_HALOREACH_RETAIL()
 	*((DWORD*)(0x82287B40)) = 0x60000000;
 	*((DWORD*)(0x82287B60)) = 0x60000000;
 }
-*/
-
 
 VOID Initialise()
 {
@@ -104,7 +98,7 @@ VOID Initialise()
 		{
 			LastTitleId = TitleID; // Set the last title id  to the current title id so we don't loop rechecking
 
-			if (TitleID == DJHero2) // TODO: DJ Hero 2 Alpha title id
+			if (TitleID == Halo3 || TitleID == Halo3ExternalBeta || TitleID == Halo3InternalBeta) // Check for both regular and alpha/beta title ids
 			{
 				RegisterActiveServer(sunrise_ip, sunrise_port, sunrise_description);
 
@@ -115,21 +109,13 @@ VOID Initialise()
 
 				switch (PLDR_Halo3xex->TimeDateStamp) // Detects the exact xex by timestamp. Prevents patching static addresses in the wrong xex.
 				{
-				case 0x4CB86B6B: // DJ Hero 2 Retail TU1
-				{
-					Sunrise_Dbg("DJ Hero 2 Retail detected! Initialising hooks...");
-					SetupNetDllHooks();
-					XNotify(L"Warehouse Sunrise Intialised!");
-					break;
-				}
-				/*
 				case 0x48C1FB10: // Halo 3 Retail TU2
 				{
 					Sunrise_Dbg("Halo 3 Retail detected! Initialising hooks...");
 					SetupNetDllHooks();
 
 					if (bAllowRetailPlayers)
-						//AllowRetailPlayers_HALO3_RETAIL();
+						AllowRetailPlayers_HALO3_RETAIL();
 
 					if (bIgnoreTrueskill)
 						SetupXUserReadStatsHook(Halo3_Retail_XUserReadStats_Addr);
@@ -218,19 +204,17 @@ VOID Initialise()
 					XNotify(L"Halo Sunrise Intialised!");
 					break;
 				}
-					*/
 				default:
 				{
-					Sunrise_Dbg("Unrecognized xex! TimeDateStamp: 0x%X", PLDR_Halo3xex->TimeDateStamp); // Print the timestamp so we can support this xex later if required.
+					Sunrise_Dbg("Unrecognized Halo 3 xex! TimeDateStamp: 0x%X", PLDR_Halo3xex->TimeDateStamp); // Print the timestamp so we can support this xex later if required.
 					SetupNetDllHooks();
 
-					XNotify(L"Warehouse Sunrise Intialised!");
+					XNotify(L"Halo Sunrise Intialised!");
 					break;
 				}
 
 				}
 			}
-			/*
 			else if (TitleID == Halo3ODST)
 			{
 				RegisterActiveServer(sunrise_ip, sunrise_port, sunrise_description);
@@ -312,7 +296,7 @@ VOID Initialise()
 					break;
 				}
 				}
-			}*/
+			}
 		}
 		Sleep(500); // Add a slight delay to the check loop
 	}
