@@ -5,6 +5,10 @@
 XTITLE_SERVER_INFO activeServer;
 WORD activeServerPort;
 
+
+//TODO: implement socketHook diff protocols, fix logging
+
+
 int NetDll_socketHook(XNCALLER_TYPE n, int af, int type, int protocol)
 {
 	int s = NetDll_socket(n, af, type, protocol);
